@@ -502,7 +502,8 @@ void raycasting(t_vars *vars)
             int d = y * 256 - SCREEN_HEIGHT * 128 + lineHeight * 128;
             int texY = ((d * texture->height) / lineHeight) / 256;
             unsigned int color = *(unsigned int*)(texture->addr + (texY * texture->line_length + texX * (texture->bpp / 8)));
-            if (side == 1) color = (color >> 1) & 8355711; // Make color darker for y-sides
+            if (side == 1) 
+                color = (color >> 1) & 8355711; // Make color darker for y-sides
             my_mlx_pixel_put(&vars->img, x, y, color);
             y++;
         }
@@ -513,12 +514,14 @@ void raycasting(t_vars *vars)
 }
 
 void destroy_images(t_vars *vars) {
-    for (int i = 0; i < 4; i++) 
+    int i = 0;
+    while (i < 4) 
     {
         if (vars->textures[i].img) 
         {
             mlx_destroy_image(vars->mlx, vars->textures[i].img);
         }
+        i++;
     }
     if (vars->img.img) 
     {
