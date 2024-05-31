@@ -110,8 +110,12 @@ void allocate_map(t_map *map_info, int width, int height) {
 }
 
 void free_map(t_map *map_info) {
-    for (int i = 0; i < map_info->map_height; i++) {
+    int i = 0;
+
+    while (i < map_info->map_height) 
+    {
         free(map_info->map[i]);
+        i++;
     }
     free(map_info->map);
     free(map_info->north_texture);
