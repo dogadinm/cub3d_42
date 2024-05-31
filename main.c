@@ -11,7 +11,8 @@
 #define SCREEN_HEIGHT 720
 #define PLAYER_RADIUS 0.2 // Player collision
 
-typedef struct  s_img {
+typedef struct  s_img 
+{
     void    *img;
     char    *addr;
     int     bpp;
@@ -21,7 +22,8 @@ typedef struct  s_img {
     int     height;
 }               t_img;
 
-typedef struct  s_map {
+typedef struct  s_map 
+{
     char *north_texture;
     char *south_texture;
     char *west_texture;
@@ -36,7 +38,8 @@ typedef struct  s_map {
     char player_start_dir;
 }               t_map;
 
-typedef struct  s_vars {
+typedef struct  s_vars 
+{
     void    *mlx;
     void    *win;
     t_img   img;
@@ -56,9 +59,11 @@ typedef struct  s_vars {
     t_map   map_info;
 }               t_vars;
 
-int parse_int(char **line) {
+int parse_int(char **line)
+ {
     int value = 0;
-    while (**line >= '0' && **line <= '9') {
+    while (**line >= '0' && **line <= '9') 
+    {
         value = value * 10 + (**line - '0');
         (*line)++;
     }
@@ -92,16 +97,19 @@ int get_color(char *line)
     return (r << 16 | g << 8 | b);
 }
 
-void allocate_map(t_map *map_info, int width, int height) {
+void allocate_map(t_map *map_info, int width, int height) 
+{
     map_info->map_width = width;
     map_info->map_height = height;
     map_info->map = malloc(height * sizeof(int *));
     
     int i = 0;
-    while (i < height) {
+    while (i < height) 
+    {
         map_info->map[i] = malloc(width * sizeof(int));
         int j = 0;
-        while (j < width) {
+        while (j < width) 
+        {
             map_info->map[i][j] = -1; // Initialize with -1 (undefined)
             j++;
         }
@@ -109,7 +117,8 @@ void allocate_map(t_map *map_info, int width, int height) {
     }
 }
 
-void free_map(t_map *map_info) {
+void free_map(t_map *map_info) 
+{
     int i = 0;
 
     while (i < map_info->map_height) 
@@ -127,18 +136,22 @@ void free_map(t_map *map_info) {
 
 
 
-void check_walls(t_map *g, int i, int j) {
+void check_walls(t_map *g, int i, int j) 
+{
     // Checking map boundaries
-    if (i == 0 || i == g->map_width - 1 || j == 0 || j == g->map_height - 1) {
+    if (i == 0 || i == g->map_width - 1 || j == 0 || j == g->map_height - 1) 
+    {
         ft_printf("Map is not closed at (%d, %d)\n", j, i);
         free_map(g);
         exit(1);
     }
 
     // Checking neighboring elements
-    if (g->map[j][i] == 0) {
+    if (g->map[j][i] == 0) 
+    {
         if (g->map[j - 1][i] == -1 || g->map[j + 1][i] == -1 ||
-            g->map[j][i - 1] == -1 || g->map[j][i + 1] == -1) {
+            g->map[j][i - 1] == -1 || g->map[j][i + 1] == -1) 
+        {
             ft_printf("Map is not closed at (%d, %d)\n", j, i);
             free_map(g);
          
@@ -166,15 +179,18 @@ void check_elements(t_map *g)
 }
 
 
-void read_map_file(char *filename, t_map *map_info) {
+void read_map_file(char *filename, t_map *map_info) 
+{
     int fd = open(filename, O_RDONLY);
-    if (fd == -1) {
+    if (fd == -1) 
+    {
         perror("Error opening map file");
         exit(1);
     }
 
     int fd2 = open(filename, O_RDONLY);
-    if (fd2 == -1) {
+    if (fd2 == -1) 
+    {
         perror("Error opening map file");
         close(fd);
         exit(1);
@@ -188,10 +204,13 @@ void read_map_file(char *filename, t_map *map_info) {
     int map_height = 0;
 
     // First pass: determine map dimensions
-    while ((line = get_next_line(fd)) != NULL) {
-        if (line[0] == ' ' || (line[0] >= '0' && line[0] <= '1')) {
+    while ((line = get_next_line(fd)) != NULL) 
+    {
+        if (line[0] == ' ' || (line[0] >= '0' && line[0] <= '1')) 
+        {
             map_height++;
-            if (ft_strlen(line) > map_width) {
+            if (ft_strlen(line) > map_width) 
+            {
                 map_width = ft_strlen(line);
             }
         }
@@ -201,7 +220,8 @@ void read_map_file(char *filename, t_map *map_info) {
     allocate_map(map_info, map_width, map_height);
 
     // Second pass: read map data
-    while ((line = get_next_line(fd2)) != NULL) {
+    while ((line = get_next_line(fd2)) != NULL) 
+    {
         if (ft_strncmp(line, "NO ", 3) == 0) 
         {
             map_info->north_texture = ft_strdup(ft_strchr(line, ' ') + 1);
@@ -233,17 +253,25 @@ void read_map_file(char *filename, t_map *map_info) {
         else if (line[0] == ' ' || (line[0] >= '0' && line[0] <= '1')) 
         {
             i = 0;
-            while (i < ft_strlen(line) && line[i] != '\n') {
-                if (line[i] == 'N' || line[i] == 'S' || line[i] == 'E' || line[i] == 'W') {
+            while (i < ft_strlen(line) && line[i] != '\n') 
+            {
+                if (line[i] == 'N' || line[i] == 'S' || line[i] == 'E' || line[i] == 'W') 
+                {
                     map_info->player_start_x = map_row;
                     map_info->player_start_y = i;
                     map_info->player_start_dir = line[i];
                     map_info->map[map_row][i] = 0;
-                } else if (line[i] == '1') {
+                } 
+                else if (line[i] == '1') 
+                {
                     map_info->map[map_row][i] = 1;
-                } else if (line[i] == '0') {
+                } 
+                else if (line[i] == '0') 
+                {
                     map_info->map[map_row][i] = 0;
-                } else {
+                } 
+                else 
+                {
                     map_info->map[map_row][i] = -1;
                 }
                 i++;
@@ -286,7 +314,8 @@ void draw_line(t_vars *vars, int x, int start, int end, int color)
 {
     int y = start;
 
-    while (y < end) {
+    while (y < end) 
+    {
         my_mlx_pixel_put(&vars->img, x, y, color);
         y++;
     }
@@ -335,27 +364,36 @@ void draw_minimap(t_vars *vars)
 
 void raycasting(t_vars *vars)
 {
-    int x, y;
+    int x;
+    int y;
 
     // Draw sky (upper half)
-    for (y = 0; y < SCREEN_HEIGHT / 2; y++)
+    y = 0;
+    while (y < SCREEN_HEIGHT / 2)
     {
-        for (x = 0; x < SCREEN_WIDTH; x++)
+        int x = 0;
+        while (x < SCREEN_WIDTH)
         {
             my_mlx_pixel_put(&vars->img, x, y, vars->map_info.ceiling_color);
+            x++;
         }
+        y++;
     }
-
     // Draw floor (lower half)
-    for (y = SCREEN_HEIGHT / 2; y < SCREEN_HEIGHT; y++)
+    y = SCREEN_HEIGHT / 2;
+    while (y < SCREEN_HEIGHT)
     {
-        for (x = 0; x < SCREEN_WIDTH; x++)
+        int x = 0;
+        while (x < SCREEN_WIDTH)
         {
             my_mlx_pixel_put(&vars->img, x, y, vars->map_info.floor_color);
+            x++;
         }
+        y++;
     }
 
-    for (x = 0; x < SCREEN_WIDTH; x++)
+    x = 0;
+    while (x < SCREEN_WIDTH)
     {
         double cameraX = 2 * x / (double)SCREEN_WIDTH - 1;
         double rayDirX = vars->dirX + vars->planeX * cameraX;
@@ -430,24 +468,19 @@ void raycasting(t_vars *vars)
             drawEnd = SCREEN_HEIGHT - 1;
 
         t_img *texture;
-        if (side == 0) {
-            if (rayDirX > 0) {
+        if (side == 0) 
+        {
+            if (rayDirX > 0) 
                 texture = &vars->textures[0]; // North
-            } 
             else 
-            {
                 texture = &vars->textures[1]; // South
-            }
         } 
-        else {
+        else 
+        {
             if (rayDirY > 0) 
-            {
                 texture = &vars->textures[3]; // East
-            } 
             else 
-            {
                 texture = &vars->textures[2]; // West
-            }
         }
         
         double wallX;
@@ -463,16 +496,18 @@ void raycasting(t_vars *vars)
         if (side == 1 && rayDirY < 0) 
             texX = texture->width - texX - 1;
 
-        for (int y = drawStart; y < drawEnd; y++)
+        int y = drawStart;
+        while (y < drawEnd)
         {
             int d = y * 256 - SCREEN_HEIGHT * 128 + lineHeight * 128;
             int texY = ((d * texture->height) / lineHeight) / 256;
             unsigned int color = *(unsigned int*)(texture->addr + (texY * texture->line_length + texX * (texture->bpp / 8)));
             if (side == 1) color = (color >> 1) & 8355711; // Make color darker for y-sides
             my_mlx_pixel_put(&vars->img, x, y, color);
+            y++;
         }
+        x++;
     }
-
     // Draw minimap
     draw_minimap(vars);
 }
@@ -651,16 +686,23 @@ int main(void)
     // Set the player's starting position and direction based on map data
     vars.posX = vars.map_info.player_start_x + 0.5; // Start in the center of the tile
     vars.posY = vars.map_info.player_start_y + 0.5; // Start in the center of the tile
-    if (vars.map_info.player_start_dir == 'N') {
+    if (vars.map_info.player_start_dir == 'N') 
+    {
         vars.dirX = -1; vars.dirY = 0;
         vars.planeX = 0; vars.planeY = 0.66;
-    } else if (vars.map_info.player_start_dir == 'S') {
+    } 
+    else if (vars.map_info.player_start_dir == 'S') 
+    {
         vars.dirX = 1; vars.dirY = 0;
         vars.planeX = 0; vars.planeY = -0.66;
-    } else if (vars.map_info.player_start_dir == 'E') {
+    } 
+    else if (vars.map_info.player_start_dir == 'E') 
+    {
         vars.dirX = 0; vars.dirY = 1;
         vars.planeX = -0.66; vars.planeY = 0;
-    } else if (vars.map_info.player_start_dir == 'W') {
+    } 
+    else if (vars.map_info.player_start_dir == 'W') 
+    {
         vars.dirX = 0; vars.dirY = -1;
         vars.planeX = 0.66; vars.planeY = 0;
     }
