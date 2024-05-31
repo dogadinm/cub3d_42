@@ -98,7 +98,7 @@ void allocate_map(t_map *map_info, int width, int height) {
     map_info->map_height = height;
     map_info->map = malloc(height * sizeof(int *));
     for (int i = 0; i < height; i++) {
-        map_info->map[i] = malloc(width * sizeof(int) - 1);
+        map_info->map[i] = malloc(width * sizeof(int));
         for (int j = 0; j < width; j++) {
             map_info->map[i][j] = -1; // Initialize with -1 (undefined)
         }
@@ -421,9 +421,6 @@ void raycasting(t_vars *vars)
         wallX -= floor(wallX);
 
         int texX = (int)(wallX * (double)(texture->width));
-        if (texX < 0) texX = 0;
-        if (texX >= texture->width) texX = texture->width - 1;
-
         if (side == 0 && rayDirX > 0) texX = texture->width - texX - 1;
         if (side == 1 && rayDirY < 0) texX = texture->width - texX - 1;
 
@@ -431,9 +428,6 @@ void raycasting(t_vars *vars)
         {
             int d = y * 256 - SCREEN_HEIGHT * 128 + lineHeight * 128;
             int texY = ((d * texture->height) / lineHeight) / 256;
-            if (texY < 0) texY = 0;
-            if (texY >= texture->height) texY = texture->height - 1;
-
             unsigned int color = *(unsigned int*)(texture->addr + (texY * texture->line_length + texX * (texture->bpp / 8)));
             if (side == 1) color = (color >> 1) & 8355711; // Make color darker for y-sides
             my_mlx_pixel_put(&vars->img, x, y, color);
@@ -444,12 +438,30 @@ void raycasting(t_vars *vars)
     draw_minimap(vars);
 }
 
+void destroy_images(t_vars *vars) {
+    for (int i = 0; i < 4; i++) {
+        if (vars->textures[i].img) {
+            mlx_destroy_image(vars->mlx, vars->textures[i].img);
+        }
+    }
+    if (vars->img.img) {
+        mlx_destroy_image(vars->mlx, vars->img.img);
+    }
+    if (vars->win) {
+        mlx_destroy_window(vars->mlx, vars->win);
+    }
+    if (vars->mlx) {
+        mlx_destroy_display(vars->mlx);
+        free(vars->mlx);
+    }
+}
+
 int handle_key_press(int key, t_vars *vars)
 {
     if (key == 65307) // Esc key
     {
-        mlx_destroy_window(vars->mlx, vars->win);
         free_map(&vars->map_info);
+        destroy_images(vars);
         exit(0);
     }
     if (key == 119) // W key
@@ -568,8 +580,8 @@ int game_loop(t_vars *vars)
 }
 
 int close_window(t_vars *vars) {
-    mlx_destroy_window(vars->mlx, vars->win);
     free_map(&vars->map_info);
+    destroy_images(vars);
     exit(0);
     return (0);
 }
@@ -621,6 +633,7 @@ int main(void)
     mlx_hook(vars.win, 17, 0L, close_window, &vars); 
     mlx_loop_hook(vars.mlx, game_loop, &vars);
     mlx_loop(vars.mlx);
+    free_map(&vars.map_info);
 
     return (0);
 }
