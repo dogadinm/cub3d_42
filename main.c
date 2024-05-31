@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <mlx.h>
+#include "./minilibx-linux/mlx.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
@@ -89,7 +89,6 @@ int get_color(char *line)
         ft_printf("Wrong color\n");
         exit(1);
     }
-
     return (r << 16 | g << 8 | b);
 }
 
@@ -97,11 +96,16 @@ void allocate_map(t_map *map_info, int width, int height) {
     map_info->map_width = width;
     map_info->map_height = height;
     map_info->map = malloc(height * sizeof(int *));
-    for (int i = 0; i < height; i++) {
+    
+    int i = 0;
+    while (i < height) {
         map_info->map[i] = malloc(width * sizeof(int));
-        for (int j = 0; j < width; j++) {
+        int j = 0;
+        while (j < width) {
             map_info->map[i][j] = -1; // Initialize with -1 (undefined)
+            j++;
         }
+        i++;
     }
 }
 
