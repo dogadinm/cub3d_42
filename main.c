@@ -9,7 +9,7 @@
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
-#define PLAYER_RADIUS 0.2 // Толщина игрока
+#define PLAYER_RADIUS 0.2 // Player collision
 
 typedef struct  s_img {
     void    *img;
@@ -56,9 +56,40 @@ typedef struct  s_vars {
     t_map   map_info;
 }               t_vars;
 
-int get_color(char *line) {
+int parse_int(char **line) {
+    int value = 0;
+    while (**line >= '0' && **line <= '9') {
+        value = value * 10 + (**line - '0');
+        (*line)++;
+    }
+    return value;
+}
+
+int get_color(char *line) 
+{
     int r, g, b;
-    sscanf(line, "%d,%d,%d", &r, &g, &b);
+
+    r = parse_int(&line);
+    if (*line != ',') 
+    {
+        ft_printf("Wrong color\n");
+        exit(1);
+    }
+    line++;  // Skip comma
+    g = parse_int(&line);
+    if (*line != ',') 
+    {
+        ft_printf("Wrong color\n");
+        exit(1);
+    } 
+    line++;  
+    b = parse_int(&line);
+    if (*line != '\0' && *line != '\n')
+    {
+        ft_printf("Wrong color\n");
+        exit(1);
+    }
+
     return (r << 16 | g << 8 | b);
 }
 
@@ -108,16 +139,23 @@ void check_walls(t_map *g, int i, int j) {
     }
 }
 
-void check_elements(t_map *g) {
-    for (int j = 0; j < g->map_height; j++) {
-        for (int i = 0; i < g->map_width; i++) {
-            if (g->map[j][i] == 0) {
+void check_elements(t_map *g) 
+{
+    int j = 0;
+    while (j < g->map_height) 
+    {
+        int i = 0;
+        while (i < g->map_width) 
+        {
+            if (g->map[j][i] == 0) 
+            {
                 check_walls(g, i, j);
             }
+            i++;
         }
+        j++;
     }
 }
-
 
 
 void read_map_file(char *filename, t_map *map_info) {
@@ -144,15 +182,14 @@ void read_map_file(char *filename, t_map *map_info) {
     while ((line = get_next_line(fd)) != NULL) {
         if (line[0] == ' ' || (line[0] >= '0' && line[0] <= '1')) {
             map_height++;
-            if (strlen(line) > map_width) {
-                map_width = strlen(line);
+            if (ft_strlen(line) > map_width) {
+                map_width = ft_strlen(line);
             }
         }
         free(line);
     }
 
     allocate_map(map_info, map_width, map_height);
-    lseek(fd2, 0, SEEK_SET);
 
     // Second pass: read map data
     while ((line = get_next_line(fd2)) != NULL) {
@@ -166,7 +203,7 @@ void read_map_file(char *filename, t_map *map_info) {
             map_info->west_texture = ft_strdup(ft_strchr(line, ' ') + 1);
             map_info->west_texture[ft_strlen(map_info->west_texture) - 1] = '\0';
         } else if (ft_strncmp(line, "EA ", 3) == 0) {
-            map_info->east_texture = strdup(ft_strchr(line, ' ') + 1);
+            map_info->east_texture = ft_strdup(ft_strchr(line, ' ') + 1);
             map_info->east_texture[ft_strlen(map_info->east_texture) - 1] = '\0';
         } else if (ft_strncmp(line, "F ", 2) == 0) {
             map_info->floor_color = get_color(ft_strchr(line, ' ') + 1);
@@ -200,27 +237,13 @@ void read_map_file(char *filename, t_map *map_info) {
     //     }
     //     printf("\n");
     // }
-
-    // // Check if map is surrounded by walls
-    // for (int i = 0; i < map_info->map_width; i++) {
-    //     if (map_info->map[0][i] != 1 || map_info->map[map_info->map_height - 1][i] != 1) {
-    //         fprintf(stderr, "Error: Map is not closed/surrounded by walls\n");
-    //         exit(1);
-    //     }
-    // }
-    // for (int i = 0; i < map_info->map_height; i++) {
-    //     if (map_info->map[i][0] != 1 || map_info->map[i][map_info->map_width - 1] != 1) {
-    //         fprintf(stderr, "Error: Map is not closed/surrounded by walls\n");
-    //         exit(1);
-    //     }
-    // }
 }
 
 void load_texture(t_vars *vars, t_img *texture, char *path)
 {
     texture->img = mlx_xpm_file_to_image(vars->mlx, path, &texture->width, &texture->height);
     if (!texture->img) {
-        fprintf(stderr, "Failed to load texture: %s\n", path);
+        ft_printf("Failed to load texture: %s\n", path);
         exit(1);
     }
     texture->addr = mlx_get_data_addr(texture->img, &texture->bpp, &texture->line_length, &texture->endian);
@@ -244,9 +267,9 @@ void draw_line(t_vars *vars, int x, int start, int end, int color)
 
 void draw_minimap(t_vars *vars)
 {
-    int map_scale = 5; // масштаб миникарты
-    int offset_x = 10; // смещение миникарты от левого края окна
-    int offset_y = 10; // смещение миникарты от верхнего края окна
+    int map_scale = 5; // Minimap scale
+    int offset_x = 10; // Minimap from the left edge of the window
+    int offset_y = 10; // Minimap from the top edge of the window
 
     for (int y = 0; y < vars->map_info.map_height; y++)
     {
@@ -254,9 +277,9 @@ void draw_minimap(t_vars *vars)
         {
             int color;
             if (vars->map_info.map[y][x] == 1)
-                color = 0xFFFFFF; // белый для стен
+                color = 0xFFFFFF; // White walls
             else if (vars->map_info.map[y][x] == 0)
-                color = 0x000000; // черный для пола
+                color = 0x000000; // Black floor
             else
                 continue;
 
@@ -270,7 +293,7 @@ void draw_minimap(t_vars *vars)
         }
     }
 
-    // Рисуем игрока на миникарте
+    // Print player on map
     int player_x = offset_x + (int)(vars->posX * map_scale);
     int player_y = offset_y + (int)(vars->posY * map_scale);
 
@@ -278,7 +301,7 @@ void draw_minimap(t_vars *vars)
     {
         for (int j = 0; j < map_scale; j++)
         {
-            my_mlx_pixel_put(&vars->img, player_x + i, player_y + j, 0xFF0000); // красный цвет для игрока
+            my_mlx_pixel_put(&vars->img, player_x + i, player_y + j, 0xFF0000); // Red player
         }
     }
 }
@@ -417,7 +440,7 @@ void raycasting(t_vars *vars)
         }
     }
 
-    // Рисуем миникарту
+    // Draw minimap
     draw_minimap(vars);
 }
 
@@ -462,11 +485,11 @@ int handle_key_release(int key, t_vars *vars)
 }
 
 int is_walkable(t_map *map, double x, double y) {
-    // Проверяем центральную точку
+    // Checking the center point
     if (map->map[(int)x][(int)y] != 0)
         return 0;
 
-    // Проверяем точки вокруг центра с учетом радиуса игрока
+    // Checking points around the center taking into account the player's radius
     if (map->map[(int)(x - PLAYER_RADIUS)][(int)(y - PLAYER_RADIUS)] != 0)
         return 0;
     if (map->map[(int)(x + PLAYER_RADIUS)][(int)(y - PLAYER_RADIUS)] != 0)
@@ -481,8 +504,8 @@ int is_walkable(t_map *map, double x, double y) {
 
 int game_loop(t_vars *vars)
 {
-    double moveSpeed = 0.05; // Увеличена скорость движения для тестирования
-    double rotSpeed = 0.03;  // Увеличена скорость поворота для тестирования
+    double moveSpeed = 0.05; // Move speed
+    double rotSpeed = 0.03;  // Camera speed
 
     if (vars->move_forward)
     {
@@ -555,7 +578,7 @@ int main(void)
 {
     t_vars vars;
 
-    read_map_file("2.cub", &vars.map_info); // Убедитесь, что указали правильный путь к вашему файлу карты
+    read_map_file("map.cub", &vars.map_info);
     check_elements(&vars.map_info);
 
     vars.mlx = mlx_init();
@@ -563,13 +586,12 @@ int main(void)
     vars.img.img = mlx_new_image(vars.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
     vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bpp, &vars.img.line_length, &vars.img.endian);
     
-    // Загружаем текстуры
     load_texture(&vars, &vars.textures[0], vars.map_info.north_texture);
     load_texture(&vars, &vars.textures[1], vars.map_info.south_texture);
     load_texture(&vars, &vars.textures[2], vars.map_info.west_texture);
     load_texture(&vars, &vars.textures[3], vars.map_info.east_texture);
 
-    // Устанавливаем начальную позицию игрока и направление на основе данных карты
+    // Set the player's starting position and direction based on map data
     vars.posX = vars.map_info.player_start_x + 0.5; // Start in the center of the tile
     vars.posY = vars.map_info.player_start_y + 0.5; // Start in the center of the tile
     if (vars.map_info.player_start_dir == 'N') {
@@ -594,10 +616,10 @@ int main(void)
     vars.turn_right = 0;
 
     raycasting(&vars);
-    mlx_hook(vars.win, 2, 1L<<0, handle_key_press, &vars); // KeyPress
-    mlx_hook(vars.win, 3, 1L<<1, handle_key_release, &vars); // KeyRelease
-    mlx_hook(vars.win, 17, 0L, close_window, &vars); // Window close
-    mlx_loop_hook(vars.mlx, game_loop, &vars); // Loop
+    mlx_hook(vars.win, 2, 1L<<0, handle_key_press, &vars);
+    mlx_hook(vars.win, 3, 1L<<1, handle_key_release, &vars); 
+    mlx_hook(vars.win, 17, 0L, close_window, &vars); 
+    mlx_loop_hook(vars.mlx, game_loop, &vars);
     mlx_loop(vars.mlx);
 
     return (0);
