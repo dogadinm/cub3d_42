@@ -177,6 +177,7 @@ void read_map_file(char *filename, t_map *map_info) {
     }
 
     char *line = NULL;
+    int i;
     int map_started = 0;
     int map_row = 0;
     int map_width = 0;
@@ -197,24 +198,38 @@ void read_map_file(char *filename, t_map *map_info) {
 
     // Second pass: read map data
     while ((line = get_next_line(fd2)) != NULL) {
-        if (ft_strncmp(line, "NO ", 3) == 0) {
+        if (ft_strncmp(line, "NO ", 3) == 0) 
+        {
             map_info->north_texture = ft_strdup(ft_strchr(line, ' ') + 1);
             map_info->north_texture[ft_strlen(map_info->north_texture) - 1] = '\0'; // Remove newline
-        } else if (ft_strncmp(line, "SO ", 3) == 0) {
+        } 
+        else if (ft_strncmp(line, "SO ", 3) == 0) 
+        {
             map_info->south_texture = strdup(ft_strchr(line, ' ') + 1);
             map_info->south_texture[ft_strlen(map_info->south_texture) - 1] = '\0';
-        } else if (ft_strncmp(line, "WE ", 3) == 0) {
+        } 
+        else if (ft_strncmp(line, "WE ", 3) == 0) 
+        {
             map_info->west_texture = ft_strdup(ft_strchr(line, ' ') + 1);
             map_info->west_texture[ft_strlen(map_info->west_texture) - 1] = '\0';
-        } else if (ft_strncmp(line, "EA ", 3) == 0) {
+        } 
+        else if (ft_strncmp(line, "EA ", 3) == 0) 
+        {
             map_info->east_texture = ft_strdup(ft_strchr(line, ' ') + 1);
             map_info->east_texture[ft_strlen(map_info->east_texture) - 1] = '\0';
-        } else if (ft_strncmp(line, "F ", 2) == 0) {
+        } 
+        else if (ft_strncmp(line, "F ", 2) == 0) 
+        {
             map_info->floor_color = get_color(ft_strchr(line, ' ') + 1);
-        } else if (ft_strncmp(line, "C ", 2) == 0) {
+        } 
+        else if (ft_strncmp(line, "C ", 2) == 0) 
+        {
             map_info->ceiling_color = get_color(ft_strchr(line, ' ') + 1);
-        } else if (line[0] == ' ' || (line[0] >= '0' && line[0] <= '1')) {
-            for (int i = 0; i < ft_strlen(line) && line[i] != '\n'; i++) {
+        } 
+        else if (line[0] == ' ' || (line[0] >= '0' && line[0] <= '1')) 
+        {
+            i = 0;
+            while (i < ft_strlen(line) && line[i] != '\n') {
                 if (line[i] == 'N' || line[i] == 'S' || line[i] == 'E' || line[i] == 'W') {
                     map_info->player_start_x = map_row;
                     map_info->player_start_y = i;
@@ -227,6 +242,7 @@ void read_map_file(char *filename, t_map *map_info) {
                 } else {
                     map_info->map[map_row][i] = -1;
                 }
+                i++;
             }
             map_row++;
         }
@@ -246,7 +262,8 @@ void read_map_file(char *filename, t_map *map_info) {
 void load_texture(t_vars *vars, t_img *texture, char *path)
 {
     texture->img = mlx_xpm_file_to_image(vars->mlx, path, &texture->width, &texture->height);
-    if (!texture->img) {
+    if (!texture->img) 
+    {
         ft_printf("Failed to load texture: %s\n", path);
         exit(1);
     }
@@ -263,10 +280,12 @@ void my_mlx_pixel_put(t_img *img, int x, int y, int color)
 
 void draw_line(t_vars *vars, int x, int start, int end, int color)
 {
-    int y;
+    int y = start;
 
-    for (y = start; y < end; y++)
+    while (y < end) {
         my_mlx_pixel_put(&vars->img, x, y, color);
+        y++;
+    }
 }
 
 void draw_minimap(t_vars *vars)
@@ -400,33 +419,45 @@ void raycasting(t_vars *vars)
         int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 
         int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
-        if (drawStart < 0) drawStart = 0;
+        if (drawStart < 0) 
+            drawStart = 0;
         int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
-        if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT - 1;
+        if (drawEnd >= SCREEN_HEIGHT) 
+            drawEnd = SCREEN_HEIGHT - 1;
 
         t_img *texture;
         if (side == 0) {
             if (rayDirX > 0) {
                 texture = &vars->textures[0]; // North
-            } else {
+            } 
+            else 
+            {
                 texture = &vars->textures[1]; // South
             }
-        } else {
-            if (rayDirY > 0) {
+        } 
+        else {
+            if (rayDirY > 0) 
+            {
                 texture = &vars->textures[3]; // East
-            } else {
+            } 
+            else 
+            {
                 texture = &vars->textures[2]; // West
             }
         }
         
         double wallX;
-        if (side == 0) wallX = vars->posY + perpWallDist * rayDirY;
-        else           wallX = vars->posX + perpWallDist * rayDirX;
+        if (side == 0) 
+            wallX = vars->posY + perpWallDist * rayDirY;
+        else           
+            wallX = vars->posX + perpWallDist * rayDirX;
         wallX -= floor(wallX);
 
         int texX = (int)(wallX * (double)(texture->width));
-        if (side == 0 && rayDirX > 0) texX = texture->width - texX - 1;
-        if (side == 1 && rayDirY < 0) texX = texture->width - texX - 1;
+        if (side == 0 && rayDirX > 0) 
+            texX = texture->width - texX - 1;
+        if (side == 1 && rayDirY < 0) 
+            texX = texture->width - texX - 1;
 
         for (int y = drawStart; y < drawEnd; y++)
         {
@@ -443,18 +474,23 @@ void raycasting(t_vars *vars)
 }
 
 void destroy_images(t_vars *vars) {
-    for (int i = 0; i < 4; i++) {
-        if (vars->textures[i].img) {
+    for (int i = 0; i < 4; i++) 
+    {
+        if (vars->textures[i].img) 
+        {
             mlx_destroy_image(vars->mlx, vars->textures[i].img);
         }
     }
-    if (vars->img.img) {
+    if (vars->img.img) 
+    {
         mlx_destroy_image(vars->mlx, vars->img.img);
     }
-    if (vars->win) {
+    if (vars->win) 
+    {
         mlx_destroy_window(vars->mlx, vars->win);
     }
-    if (vars->mlx) {
+    if (vars->mlx) 
+    {
         mlx_destroy_display(vars->mlx);
         free(vars->mlx);
     }
@@ -583,7 +619,8 @@ int game_loop(t_vars *vars)
     return (0);
 }
 
-int close_window(t_vars *vars) {
+int close_window(t_vars *vars) 
+{
     free_map(&vars->map_info);
     destroy_images(vars);
     exit(0);
