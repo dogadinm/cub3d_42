@@ -60,8 +60,10 @@ typedef struct  s_vars
 }               t_vars;
 
 int parse_int(char **line)
- {
-    int value = 0;
+{
+    int value;
+    value = 0;
+
     while (**line >= '0' && **line <= '9') 
     {
         value = value * 10 + (**line - '0');
@@ -72,7 +74,13 @@ int parse_int(char **line)
 
 int get_color(char *line) 
 {
-    int r, g, b;
+    int r;
+    int g;
+    int b;
+
+    r = 0;
+    g = 0;
+    b = 0;
 
     r = parse_int(&line);
     if (*line != ',') 
@@ -99,15 +107,18 @@ int get_color(char *line)
 
 void allocate_map(t_map *map_info, int width, int height) 
 {
+    int i; 
+    int j;
+
     map_info->map_width = width;
     map_info->map_height = height;
     map_info->map = malloc(height * sizeof(int *));
     
-    int i = 0;
+    i = 0;
     while (i < height) 
     {
         map_info->map[i] = malloc(width * sizeof(int));
-        int j = 0;
+        j = 0;
         while (j < width) 
         {
             map_info->map[i][j] = -1; // Initialize with -1 (undefined)
@@ -119,8 +130,9 @@ void allocate_map(t_map *map_info, int width, int height)
 
 void free_map(t_map *map_info) 
 {
-    int i = 0;
+    int i;
 
+    i = 0;
     while (i < map_info->map_height) 
     {
         free(map_info->map[i]);
@@ -132,9 +144,6 @@ void free_map(t_map *map_info)
     free(map_info->west_texture);
     free(map_info->east_texture);
 }
-
-
-
 
 void check_walls(t_map *g, int i, int j) 
 {
@@ -154,7 +163,6 @@ void check_walls(t_map *g, int i, int j)
         {
             ft_printf("Map is not closed at (%d, %d)\n", j, i);
             free_map(g);
-         
             exit(1);
         }
     }
@@ -162,10 +170,13 @@ void check_walls(t_map *g, int i, int j)
 
 void check_elements(t_map *g) 
 {
-    int j = 0;
+    int i;
+    int j;
+
+    j = 0;
     while (j < g->map_height) 
     {
-        int i = 0;
+        i = 0;
         while (i < g->map_width) 
         {
             if (g->map[j][i] == 0) 
@@ -178,17 +189,25 @@ void check_elements(t_map *g)
     }
 }
 
-
 void read_map_file(char *filename, t_map *map_info) 
 {
-    int fd = open(filename, O_RDONLY);
+    int fd;
+    int fd2;
+    int i;
+    int map_started;
+    int map_row;
+    int map_width;
+    int map_height;
+    char *line;
+
+    fd = open(filename, O_RDONLY);
     if (fd == -1) 
     {
         perror("Error opening map file");
         exit(1);
     }
 
-    int fd2 = open(filename, O_RDONLY);
+    fd2 = open(filename, O_RDONLY);
     if (fd2 == -1) 
     {
         perror("Error opening map file");
@@ -196,12 +215,12 @@ void read_map_file(char *filename, t_map *map_info)
         exit(1);
     }
 
-    char *line = NULL;
-    int i;
-    int map_started = 0;
-    int map_row = 0;
-    int map_width = 0;
-    int map_height = 0;
+    line = NULL;
+    i = 0;
+    map_started = 0;
+    map_row = 0;
+    map_width = 0;
+    map_height = 0;
 
     // First pass: determine map dimensions
     while ((line = get_next_line(fd)) != NULL) 
@@ -283,12 +302,12 @@ void read_map_file(char *filename, t_map *map_info)
     close(fd);
     close(fd2);
     
-    // for (int y = 0; y < map_info->map_height; y++) {
-    // for (int x = 0; x < map_info->map_width; x++) {
-    //         printf("%d", map_info->map[y][x]);
-    //     }
-    //     printf("\n");
-    // }
+    for (int y = 0; y < map_info->map_height; y++) {
+    for (int x = 0; x < map_info->map_width; x++) {
+            printf("%d", map_info->map[y][x]);
+        }
+        printf("\n");
+    }
 }
 
 void load_texture(t_vars *vars, t_img *texture, char *path)
@@ -312,8 +331,9 @@ void my_mlx_pixel_put(t_img *img, int x, int y, int color)
 
 void draw_line(t_vars *vars, int x, int start, int end, int color)
 {
-    int y = start;
+    int y;
 
+    y = start;
     while (y < end) 
     {
         my_mlx_pixel_put(&vars->img, x, y, color);
@@ -321,57 +341,39 @@ void draw_line(t_vars *vars, int x, int start, int end, int color)
     }
 }
 
-void draw_minimap(t_vars *vars)
-{
-    int map_scale = 5; // Minimap scale
-    int offset_x = 10; // Minimap from the left edge of the window
-    int offset_y = 10; // Minimap from the top edge of the window
-
-    for (int y = 0; y < vars->map_info.map_height; y++)
-    {
-        for (int x = 0; x < vars->map_info.map_width; x++)
-        {
-            int color;
-            if (vars->map_info.map[y][x] == 1)
-                color = 0xFFFFFF; // White walls
-            else if (vars->map_info.map[y][x] == 0)
-                color = 0x000000; // Black floor
-            else
-                continue;
-
-            for (int i = 0; i < map_scale; i++)
-            {
-                for (int j = 0; j < map_scale; j++)
-                {
-                    my_mlx_pixel_put(&vars->img, offset_x + x * map_scale + i, offset_y + y * map_scale + j, color);
-                }
-            }
-        }
-    }
-
-    // Print player on map
-    int player_x = offset_x + (int)(vars->posX * map_scale);
-    int player_y = offset_y + (int)(vars->posY * map_scale);
-
-    for (int i = 0; i < map_scale; i++)
-    {
-        for (int j = 0; j < map_scale; j++)
-        {
-            my_mlx_pixel_put(&vars->img, player_x + i, player_y + j, 0xFF0000); // Red player
-        }
-    }
-}
-
 void raycasting(t_vars *vars)
 {
-    int x;
+    int x; 
     int y;
+    double cameraX;
+    double rayDirX;
+    double rayDirY;
+    int mapX;
+    int mapY;
+    double sideDistX;
+    double sideDistY;
+    double deltaDistX;
+    double deltaDistY;
+    double perpWallDist;
+    int stepX;
+    int stepY;
+    int hit;
+    int side;
+    int lineHeight;
+    int drawStart;
+    int drawEnd;
+    double wallX;
+    int texX;
+    int texY;
+    unsigned int color;
+    int d;
+    t_img *texture;
 
     // Draw sky (upper half)
     y = 0;
     while (y < SCREEN_HEIGHT / 2)
     {
-        int x = 0;
+        x = 0;
         while (x < SCREEN_WIDTH)
         {
             my_mlx_pixel_put(&vars->img, x, y, vars->map_info.ceiling_color);
@@ -383,7 +385,7 @@ void raycasting(t_vars *vars)
     y = SCREEN_HEIGHT / 2;
     while (y < SCREEN_HEIGHT)
     {
-        int x = 0;
+        x = 0;
         while (x < SCREEN_WIDTH)
         {
             my_mlx_pixel_put(&vars->img, x, y, vars->map_info.floor_color);
@@ -395,26 +397,18 @@ void raycasting(t_vars *vars)
     x = 0;
     while (x < SCREEN_WIDTH)
     {
-        double cameraX = 2 * x / (double)SCREEN_WIDTH - 1;
-        double rayDirX = vars->dirX + vars->planeX * cameraX;
-        double rayDirY = vars->dirY + vars->planeY * cameraX;
 
-        int mapX = (int)vars->posX;
-        int mapY = (int)vars->posY;
+        cameraX = 2 * x / (double)SCREEN_WIDTH - 1;
+        rayDirX = vars->dirX + vars->planeX * cameraX;
+        rayDirY = vars->dirY + vars->planeY * cameraX;
 
-        double sideDistX;
-        double sideDistY;
+        mapX = (int)vars->posX;
+        mapY = (int)vars->posY;
 
-        double deltaDistX = fabs(1 / rayDirX);
-        double deltaDistY = fabs(1 / rayDirY);
-        double perpWallDist;
+        deltaDistX = fabs(1 / rayDirX);
+        deltaDistY = fabs(1 / rayDirY);
 
-        int stepX;
-        int stepY;
-
-        int hit = 0;
-        int side;
-
+        hit = 0;
         if (rayDirX < 0)
         {
             stepX = -1;
@@ -458,16 +452,15 @@ void raycasting(t_vars *vars)
         else
             perpWallDist = (mapY - vars->posY + (1 - stepY) / 2) / rayDirY;
 
-        int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
+        lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 
-        int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
+        drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
         if (drawStart < 0) 
             drawStart = 0;
-        int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
+        drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
         if (drawEnd >= SCREEN_HEIGHT) 
             drawEnd = SCREEN_HEIGHT - 1;
 
-        t_img *texture;
         if (side == 0) 
         {
             if (rayDirX > 0) 
@@ -478,30 +471,29 @@ void raycasting(t_vars *vars)
         else 
         {
             if (rayDirY > 0) 
-                texture = &vars->textures[3]; // East
-            else 
                 texture = &vars->textures[2]; // West
+            else 
+                texture = &vars->textures[3]; // East
         }
         
-        double wallX;
         if (side == 0) 
             wallX = vars->posY + perpWallDist * rayDirY;
         else           
             wallX = vars->posX + perpWallDist * rayDirX;
         wallX -= floor(wallX);
 
-        int texX = (int)(wallX * (double)(texture->width));
+        texX = (int)(wallX * (double)(texture->width));
         if (side == 0 && rayDirX > 0) 
             texX = texture->width - texX - 1;
         if (side == 1 && rayDirY < 0) 
             texX = texture->width - texX - 1;
 
-        int y = drawStart;
+        y = drawStart;
         while (y < drawEnd)
         {
-            int d = y * 256 - SCREEN_HEIGHT * 128 + lineHeight * 128;
-            int texY = ((d * texture->height) / lineHeight) / 256;
-            unsigned int color = *(unsigned int*)(texture->addr + (texY * texture->line_length + texX * (texture->bpp / 8)));
+            d = y * 256 - SCREEN_HEIGHT * 128 + lineHeight * 128;
+            texY = ((d * texture->height) / lineHeight) / 256;
+            color = *(unsigned int*)(texture->addr + (texY * texture->line_length + texX * (texture->bpp / 8)));
             if (side == 1) 
                 color = (color >> 1) & 8355711; // Make color darker for y-sides
             my_mlx_pixel_put(&vars->img, x, y, color);
@@ -509,12 +501,12 @@ void raycasting(t_vars *vars)
         }
         x++;
     }
-    // Draw minimap
-    draw_minimap(vars);
 }
 
 void destroy_images(t_vars *vars) {
-    int i = 0;
+    int i;
+
+    i = 0;
     while (i < 4) 
     {
         if (vars->textures[i].img) 
@@ -578,7 +570,8 @@ int handle_key_release(int key, t_vars *vars)
     return (0);
 }
 
-int is_walkable(t_map *map, double x, double y) {
+int is_walkable(t_map *map, double x, double y) 
+{
     // Checking the center point
     if (map->map[(int)x][(int)y] != 0)
         return 0;
@@ -598,13 +591,20 @@ int is_walkable(t_map *map, double x, double y) {
 
 int game_loop(t_vars *vars)
 {
-    double moveSpeed = 0.05; // Move speed
-    double rotSpeed = 0.03;  // Camera speed
+    double moveSpeed; 
+    double rotSpeed;
+    double newPosX;
+    double newPosY;
+    double oldDirX; 
+    double oldPlaneX;
+
+    moveSpeed = 0.05; // Move speed
+    rotSpeed = 0.03;  // Camera speed
 
     if (vars->move_forward)
     {
-        double newPosX = vars->posX + vars->dirX * moveSpeed;
-        double newPosY = vars->posY + vars->dirY * moveSpeed;
+        newPosX = vars->posX + vars->dirX * moveSpeed;
+        newPosY = vars->posY + vars->dirY * moveSpeed;
         if (is_walkable(&vars->map_info, newPosX, vars->posY))
             vars->posX = newPosX;
         if (is_walkable(&vars->map_info, vars->posX, newPosY))
@@ -612,8 +612,8 @@ int game_loop(t_vars *vars)
     }
     if (vars->move_backward)
     {
-        double newPosX = vars->posX - vars->dirX * moveSpeed;
-        double newPosY = vars->posY - vars->dirY * moveSpeed;
+        newPosX = vars->posX - vars->dirX * moveSpeed;
+        newPosY = vars->posY - vars->dirY * moveSpeed;
         if (is_walkable(&vars->map_info, newPosX, vars->posY))
             vars->posX = newPosX;
         if (is_walkable(&vars->map_info, vars->posX, newPosY))
@@ -621,8 +621,8 @@ int game_loop(t_vars *vars)
     }
     if (vars->move_left)
     {
-        double newPosX = vars->posX - vars->planeX * moveSpeed;
-        double newPosY = vars->posY - vars->planeY * moveSpeed;
+        newPosX = vars->posX - vars->planeX * moveSpeed;
+        newPosY = vars->posY - vars->planeY * moveSpeed;
         if (is_walkable(&vars->map_info, newPosX, vars->posY))
             vars->posX = newPosX;
         if (is_walkable(&vars->map_info, vars->posX, newPosY))
@@ -630,8 +630,8 @@ int game_loop(t_vars *vars)
     }
     if (vars->move_right)
     {
-        double newPosX = vars->posX + vars->planeX * moveSpeed;
-        double newPosY = vars->posY + vars->planeY * moveSpeed;
+        newPosX = vars->posX + vars->planeX * moveSpeed;
+        newPosY = vars->posY + vars->planeY * moveSpeed;
         if (is_walkable(&vars->map_info, newPosX, vars->posY))
             vars->posX = newPosX;
         if (is_walkable(&vars->map_info, vars->posX, newPosY))
@@ -639,19 +639,19 @@ int game_loop(t_vars *vars)
     }
     if (vars->turn_left)
     {
-        double oldDirX = vars->dirX;
+        oldDirX = vars->dirX;
         vars->dirX = vars->dirX * cos(rotSpeed) - vars->dirY * sin(rotSpeed);
         vars->dirY = oldDirX * sin(rotSpeed) + vars->dirY * cos(rotSpeed);
-        double oldPlaneX = vars->planeX;
+        oldPlaneX = vars->planeX;
         vars->planeX = vars->planeX * cos(rotSpeed) - vars->planeY * sin(rotSpeed);
         vars->planeY = oldPlaneX * sin(rotSpeed) + vars->planeY * cos(rotSpeed);
     }
     if (vars->turn_right)
     {
-        double oldDirX = vars->dirX;
+        oldDirX = vars->dirX;
         vars->dirX = vars->dirX * cos(-rotSpeed) - vars->dirY * sin(-rotSpeed);
         vars->dirY = oldDirX * sin(-rotSpeed) + vars->dirY * cos(-rotSpeed);
-        double oldPlaneX = vars->planeX;
+        oldPlaneX = vars->planeX;
         vars->planeX = vars->planeX * cos(-rotSpeed) - vars->planeY * sin(-rotSpeed);
         vars->planeY = oldPlaneX * sin(-rotSpeed) + vars->planeY * cos(-rotSpeed);
     }
@@ -669,11 +669,25 @@ int close_window(t_vars *vars)
     return (0);
 }
 
-int main(void)
+void	check_arg(int argc, char **argv)
+{
+	if (argc != 2)
+	{
+		ft_printf("Error\nShould be ./cub3d \"map_file\"\n");
+		exit(1);
+	}
+	if (ft_strncmp(argv[1] + ft_strlen(argv[1]) - 4, ".cub", 4))
+	{
+		ft_printf("Error\nFile must be of type \".cub\"\n");
+		exit(1);
+	}
+}
+
+int main(int argc, char **argv)
 {
     t_vars vars;
-
-    read_map_file("map.cub", &vars.map_info);
+    check_arg(argc, argv);
+    read_map_file(argv[1], &vars.map_info);
     check_elements(&vars.map_info);
 
     vars.mlx = mlx_init();
@@ -702,12 +716,12 @@ int main(void)
     else if (vars.map_info.player_start_dir == 'E') 
     {
         vars.dirX = 0; vars.dirY = 1;
-        vars.planeX = -0.66; vars.planeY = 0;
+        vars.planeX = 0.66; vars.planeY = 0;
     } 
     else if (vars.map_info.player_start_dir == 'W') 
     {
         vars.dirX = 0; vars.dirY = -1;
-        vars.planeX = 0.66; vars.planeY = 0;
+        vars.planeX = -0.66; vars.planeY = 0;
     }
 
     vars.move_forward = 0;
