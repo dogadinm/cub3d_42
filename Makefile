@@ -1,12 +1,12 @@
 NAME = cub3d
 CC = cc
-FLAGS = -Wall -Werror -Wextra -g
-MLXFLAGS	=	-L ./minilibx-linux -lmlx -Ilmlx -lXext -lX11
+FLAGS = -Wall -Wextra 
+MLXFLAGS	=	-lm -L ./minilibx-linux -lmlx -Ilmlx -lXext -lX11
 LIBFT = ./libft/libft.a
 LIBFTDIR = ./libft
 MINILIBX_PATH	=	./minilibx-linux
 MINILIBX		=	$(MINILIBX_PATH)/libmlx.a
-SRC = main.c my_mlx.c game.c render.c utils.c
+SRC = main.c raycasting.c game_loop.c read_map_file.c check_elements.c free_map.c move.c get_color.c allocate_map.c texture.c
 
 OBJ = $(SRC:%.c=%.o)
 
@@ -15,7 +15,7 @@ all: ${NAME}
 ${NAME}: $(OBJ)
 	$(MAKE) --no-print-directory -C $(MINILIBX_PATH)
 	$(MAKE) -C $(LIBFTDIR)
-	$(CC) $(FLAGS) -lm $(SRC) $(MLXFLAGS) $(LIBFT) -o $(NAME)
+	$(CC) $(FLAGS)  $(SRC) $(MLXFLAGS) $(LIBFT) -o $(NAME)
 
 clean:
 	$(MAKE) clean -C ./libft
