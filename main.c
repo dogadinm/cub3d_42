@@ -1,11 +1,8 @@
 #include "./libft/libft.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
 #include "./minilibx-linux/mlx.h"
+#include <math.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
+
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -248,7 +245,7 @@ void read_map_file(char *filename, t_map *map_info)
         } 
         else if (ft_strncmp(line, "SO ", 3) == 0) 
         {
-            map_info->south_texture = strdup(ft_strchr(line, ' ') + 1);
+            map_info->south_texture = ft_strdup(ft_strchr(line, ' ') + 1);
             map_info->south_texture[ft_strlen(map_info->south_texture) - 1] = '\0';
         } 
         else if (ft_strncmp(line, "WE ", 3) == 0) 
