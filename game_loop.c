@@ -21,14 +21,14 @@ int is_walkable(t_map *map, double x, double y)
 int game_loop(t_vars *vars)
 {
     double moveSpeed; 
-    double rotSpeed;
+    double cameraSpeed;
     double newPosX;
     double newPosY;
     double oldDirX; 
     double oldPlaneX;
 
-    moveSpeed = 0.05; // Move speed
-    rotSpeed = 0.03;  // Camera speed
+    moveSpeed = MOVES_SPEED;
+    cameraSpeed = CAMERA_SPEED;
 
     if (vars->move_forward)
     {
@@ -69,20 +69,20 @@ int game_loop(t_vars *vars)
     if (vars->turn_left)
     {
         oldDirX = vars->dirX;
-        vars->dirX = vars->dirX * cos(rotSpeed) - vars->dirY * sin(rotSpeed);
-        vars->dirY = oldDirX * sin(rotSpeed) + vars->dirY * cos(rotSpeed);
+        vars->dirX = vars->dirX * cos(cameraSpeed) - vars->dirY * sin(cameraSpeed);
+        vars->dirY = oldDirX * sin(cameraSpeed) + vars->dirY * cos(cameraSpeed);
         oldPlaneX = vars->planeX;
-        vars->planeX = vars->planeX * cos(rotSpeed) - vars->planeY * sin(rotSpeed);
-        vars->planeY = oldPlaneX * sin(rotSpeed) + vars->planeY * cos(rotSpeed);
+        vars->planeX = vars->planeX * cos(cameraSpeed) - vars->planeY * sin(cameraSpeed);
+        vars->planeY = oldPlaneX * sin(cameraSpeed) + vars->planeY * cos(cameraSpeed);
     }
     if (vars->turn_right)
     {
         oldDirX = vars->dirX;
-        vars->dirX = vars->dirX * cos(-rotSpeed) - vars->dirY * sin(-rotSpeed);
-        vars->dirY = oldDirX * sin(-rotSpeed) + vars->dirY * cos(-rotSpeed);
+        vars->dirX = vars->dirX * cos(-cameraSpeed) - vars->dirY * sin(-cameraSpeed);
+        vars->dirY = oldDirX * sin(-cameraSpeed) + vars->dirY * cos(-cameraSpeed);
         oldPlaneX = vars->planeX;
-        vars->planeX = vars->planeX * cos(-rotSpeed) - vars->planeY * sin(-rotSpeed);
-        vars->planeY = oldPlaneX * sin(-rotSpeed) + vars->planeY * cos(-rotSpeed);
+        vars->planeX = vars->planeX * cos(-cameraSpeed) - vars->planeY * sin(-cameraSpeed);
+        vars->planeY = oldPlaneX * sin(-cameraSpeed) + vars->planeY * cos(-cameraSpeed);
     }
     mlx_clear_window(vars->mlx, vars->win);
     raycasting(vars);

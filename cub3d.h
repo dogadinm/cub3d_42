@@ -1,17 +1,16 @@
 #ifndef CUB3D_H_
 #define CUB3D_H_
 
-
-
 #include "./libft/libft.h"
 #include "./minilibx-linux/mlx.h"
 #include <math.h>
 #include <fcntl.h>
 
-
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
-#define PLAYER_RADIUS 0.2 // Player collision
+#define PLAYER_RADIUS 0.2   // Player collision
+#define MOVES_SPEED 0.03    // Move speed
+#define CAMERA_SPEED 0.01  // Camera speed
 
 typedef struct  s_img 
 {
