@@ -76,4 +76,5 @@ int handle_key_release(int key, t_vars *vars);
 int get_color(char *line);
 void init_move(t_vars *vars);
 void allocate_map(t_map *map_info, int width, int height);
+
 #endif
