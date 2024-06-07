@@ -22,7 +22,6 @@ int get_color(char *line)
     r = 0;
     g = 0;
     b = 0;
-
     r = parse_int(&line);
     if (*line != ',') 
     {

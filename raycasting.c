@@ -16,13 +16,13 @@ void raycasting(t_vars *vars)
     double rayDirY;
     int mapX;
     int mapY;
-    double sideDistX;
-    double sideDistY;
+    double sideDistX; //length of ray from current position to next x or y-side
+    double sideDistY; //length of ray from current position to next x or y-side
     double deltaDistX;
     double deltaDistY;
     double perpWallDist;
-    int stepX;
-    int stepY;
+    int stepX; //what direction to step in x or y-direction (either +1 or -1)
+    int stepY; //what direction to step in x or y-direction (either +1 or -1)
     int hit;
     int side;
     int lineHeight;
@@ -63,22 +63,36 @@ void raycasting(t_vars *vars)
     x = 0;
     while (x < SCREEN_WIDTH)
     {
-
-        cameraX = 2 * x / (double)SCREEN_WIDTH - 1;
+        //calculate ray position and direction
+        cameraX = 2 * x / (double)SCREEN_WIDTH - 1; //x-coordinate in camera space
         rayDirX = vars->dirX + vars->planeX * cameraX;
         rayDirY = vars->dirY + vars->planeY * cameraX;
+        // printf("%f       %f\n",vars->dirX,vars->dirY);
+        // printf("%f       %f\n",rayDirX,rayDirY);
 
+        //which box of the map we're in
         mapX = (int)vars->posX;
         mapY = (int)vars->posY;
 
+        //length of ray from one x or y-side to next x or y-side
+        //these are derived as:
+        //deltaDistX = sqrt(1 + (rayDirY * rayDirY) / (rayDirX * rayDirX))
+        //deltaDistY = sqrt(1 + (rayDirX * rayDirX) / (rayDirY * rayDirY))
+        //which can be simplified to abs(|rayDir| / rayDirX) and abs(|rayDir| / rayDirY)
+        //where |rayDir| is the length of the vector (rayDirX, rayDirY). Its length,
+        //unlike (dirX, dirY) is not 1, however this does not matter, only the
+        //ratio between deltaDistX and deltaDistY matters, due to the way the DDA
+        //stepping further below works. So the values can be computed as below.
+        // Division through zero is prevented, even though technical
         deltaDistX = fabs(1 / rayDirX);
         deltaDistY = fabs(1 / rayDirY);
 
-        hit = 0;
+        hit = 0; //was there a wall hit?
+        //calculate step and initial sideDist
         if (rayDirX < 0)
         {
-            stepX = -1;
-            sideDistX = (vars->posX - mapX) * deltaDistX;
+            stepX = -1; //what direction to step in x or y-direction (either +1 or -1)
+            sideDistX = (vars->posX - mapX) * deltaDistX; //length of ray from current position to next x or y-side
         }
         else
         {
@@ -95,38 +109,49 @@ void raycasting(t_vars *vars)
             stepY = 1;
             sideDistY = (mapY + 1.0 - vars->posY) * deltaDistY;
         }
+        // printf("%f       %f\n",sideDistX,sideDistY);
 
+        //perform DDA
         while (hit == 0)
         {
             if (sideDistX < sideDistY)
             {
                 sideDistX += deltaDistX;
                 mapX += stepX;
-                side = 0;
+                side = 0; //was a NS or a EW wall hit?
             }
             else
             {
                 sideDistY += deltaDistY;
                 mapY += stepY;
-                side = 1;
+                side = 1; 
             }
-            if (vars->map_info.map[mapX][mapY] > 0) hit = 1;
+            //Check if ray has hit a wall
+            if (vars->map_info.map[mapX][mapY] > 0) 
+                hit = 1;
         }
-
+        //Calculate distance projected on camera direction. This is the shortest distance from the point where the wall is
+        //hit to the camera plane. Euclidean to center camera point would give fisheye effect!
+        //This can be computed as (mapX - posX + (1 - stepX) / 2) / rayDirX for side == 0, or same formula with Y
+        //for size == 1, but can be simplified to the code below thanks to how sideDist and deltaDist are computed:
+        //because they were left scaled to |rayDir|. sideDist is the entire length of the ray above after the multiple
+        //steps, but we subtract deltaDist once because one step more into the wall was taken above.
         if (side == 0)
             perpWallDist = (mapX - vars->posX + (1 - stepX) / 2) / rayDirX;
         else
             perpWallDist = (mapY - vars->posY + (1 - stepY) / 2) / rayDirY;
 
+        //Calculate height of line to draw on screen
         lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 
+        //calculate lowest and highest pixel to fill in current stripe
         drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
         if (drawStart < 0) 
             drawStart = 0;
         drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
         if (drawEnd >= SCREEN_HEIGHT) 
             drawEnd = SCREEN_HEIGHT - 1;
-
+        //load textures
         if (side == 0) 
         {
             if (rayDirX > 0) 
