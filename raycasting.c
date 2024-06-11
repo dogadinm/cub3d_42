@@ -109,7 +109,7 @@ void raycasting(t_vars *vars)
             stepY = 1;
             sideDistY = (mapY + 1.0 - vars->posY) * deltaDistY;
         }
-        // printf("%f       %f\n",sideDistX,sideDistY);
+        // printf("%d       %d\n",stepX,stepY);
 
         //perform DDA
         while (hit == 0)
@@ -144,6 +144,7 @@ void raycasting(t_vars *vars)
         //Calculate height of line to draw on screen
         lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 
+        
         //calculate lowest and highest pixel to fill in current stripe
         drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
         if (drawStart < 0) 
@@ -172,24 +173,29 @@ void raycasting(t_vars *vars)
         else           
             wallX = vars->posX + perpWallDist * rayDirX;
         wallX -= floor(wallX);
-
+        
+        //the x horizontal pixel of the texture will be used for the wall stripe.
         texX = (int)(wallX * (double)(texture->width));
         if (side == 0 && rayDirX > 0) 
             texX = texture->width - texX - 1;
         if (side == 1 && rayDirY < 0) 
             texX = texture->width - texX - 1;
-
+        
         y = drawStart;
         while (y < drawEnd)
         {
-            d = y * 256 - SCREEN_HEIGHT * 128 + lineHeight * 128;
-            texY = ((d * texture->height) / lineHeight) / 256;
+            // d = y * texture->height * 2 - SCREEN_HEIGHT * texture->height + lineHeight * texture->height;
+            // texY = ((d * texture->height) / lineHeight) / (texture->height * 2);
+            d = texture->height * (y * 2 - SCREEN_HEIGHT + lineHeight);
+            texY = d / (lineHeight * 2);
+            
             color = *(unsigned int*)(texture->addr + (texY * texture->line_length + texX * (texture->bpp / 8)));
             if (side == 1) 
                 color = (color >> 1) & 8355711; // Make color darker for y-sides
             my_mlx_pixel_put(&vars->img, x, y, color);
             y++;
         }
+        
         x++;
     }
 }
