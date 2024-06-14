@@ -1,29 +1,35 @@
 NAME = cub3d
 CC = cc
-FLAGS = -Wall -Wextra 
-MLXFLAGS	=	-lm -L ./minilibx-linux -lmlx -Ilmlx -lXext -lX11
+FLAGS = -Wall -Wextra
+MLXFLAGS = -lm -L ./minilibx-linux -lmlx -lXext -lX11
 LIBFT = ./libft/libft.a
 LIBFTDIR = ./libft
-MINILIBX_PATH	=	./minilibx-linux
-MINILIBX		=	$(MINILIBX_PATH)/libmlx.a
-SRC = main.c raycasting.c game_loop.c read_map_file.c check_elements.c free_map.c move.c get_color.c allocate_map.c texture.c
+MINILIBX_PATH = ./minilibx-linux
+SRC_DIR = src
+OBJ_DIR = obj
+SRC = $(wildcard $(SRC_DIR)/*.c)
+OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-OBJ = $(SRC:%.c=%.o)
+all: $(NAME)
 
-all: ${NAME}
+$(OBJ_DIR):
+	@mkdir -p $(OBJ_DIR)
 
-${NAME}: $(OBJ)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(FLAGS) -I$(MINILIBX_PATH) -I$(LIBFTDIR) -c $< -o $@
+
+$(NAME): $(OBJ)
 	$(MAKE) --no-print-directory -C $(MINILIBX_PATH)
 	$(MAKE) -C $(LIBFTDIR)
-	$(CC) $(FLAGS)  $(SRC) $(MLXFLAGS) $(LIBFT) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJ) $(MLXFLAGS) $(LIBFT) -o $(NAME)
 
 clean:
-	$(MAKE) clean -C ./libft
-	@rm -rf $(OBJ)
+	$(MAKE) clean -C $(LIBFTDIR)
+	@rm -rf $(OBJ_DIR)
 
 fclean: clean
-	$(MAKE) fclean -C ./libft
-	@rm -rf $(NAME) $(OBJ)
+	$(MAKE) fclean -C $(LIBFTDIR)
+	@rm -rf $(NAME)
 
 re: fclean all
 

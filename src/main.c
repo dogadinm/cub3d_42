@@ -1,4 +1,4 @@
-#include "cub3d.h"\
+#include "cub3d.h"
 
 void	check_arg(int argc, char **argv)
 {
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     starting_position(&vars);
     init_move(&vars);
     mlx_hook(vars.win, 2, 1L<<0, handle_key_press, &vars);
-    mlx_hook(vars.win, 3, 1L<<1, handle_key_release, &vars); 
+    mlx_hook(vars.win, 3, 1L<<1, handle_key_release, &vars);
     mlx_hook(vars.win, 17, 0L, close_window, &vars); 
     mlx_loop_hook(vars.mlx, game_loop, &vars);
     mlx_loop(vars.mlx);

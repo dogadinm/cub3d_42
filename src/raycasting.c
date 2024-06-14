@@ -7,6 +7,37 @@ void my_mlx_pixel_put(t_img *img, int x, int y, int color)
     *(unsigned int*)dst = color;
 }
 
+void    sky_and_floor(t_vars *vars)
+{
+    int y;
+    int x;
+
+    y = 0;
+    while (y < SCREEN_HEIGHT / 2)
+    {
+        x = 0;
+        while (x < SCREEN_WIDTH)
+        {
+            my_mlx_pixel_put(&vars->img, x, y, vars->map_info.ceiling_color);
+            x++;
+        }
+        y++;
+    }
+    // Draw floor (lower half)
+    y = SCREEN_HEIGHT / 2;
+    while (y < SCREEN_HEIGHT)
+    {
+        x = 0;
+        while (x < SCREEN_WIDTH)
+        {
+            my_mlx_pixel_put(&vars->img, x, y, vars->map_info.floor_color);
+            x++;
+        }
+        y++;
+    }
+
+}
+
 void raycasting(t_vars *vars)
 {
     int x; 
@@ -35,30 +66,9 @@ void raycasting(t_vars *vars)
     int d;
     t_img *texture;
 
-    // Draw sky (upper half)
-    y = 0;
-    while (y < SCREEN_HEIGHT / 2)
-    {
-        x = 0;
-        while (x < SCREEN_WIDTH)
-        {
-            my_mlx_pixel_put(&vars->img, x, y, vars->map_info.ceiling_color);
-            x++;
-        }
-        y++;
-    }
-    // Draw floor (lower half)
-    y = SCREEN_HEIGHT / 2;
-    while (y < SCREEN_HEIGHT)
-    {
-        x = 0;
-        while (x < SCREEN_WIDTH)
-        {
-            my_mlx_pixel_put(&vars->img, x, y, vars->map_info.floor_color);
-            x++;
-        }
-        y++;
-    }
+    
+
+
 
     x = 0;
     while (x < SCREEN_WIDTH)
@@ -184,8 +194,11 @@ void raycasting(t_vars *vars)
         y = drawStart;
         while (y < drawEnd)
         {
+            // big formula 
             // d = y * texture->height * 2 - SCREEN_HEIGHT * texture->height + lineHeight * texture->height;
             // texY = ((d * texture->height) / lineHeight) / (texture->height * 2);
+
+            // short formula
             d = texture->height * (y * 2 - SCREEN_HEIGHT + lineHeight);
             texY = d / (lineHeight * 2);
             

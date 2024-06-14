@@ -1,8 +1,8 @@
 #ifndef CUB3D_H_
 #define CUB3D_H_
 
-#include "./libft/libft.h"
-#include "./minilibx-linux/mlx.h"
+#include "../libft/libft.h"
+#include "../minilibx-linux/mlx.h"
 #include <math.h>
 #include <fcntl.h>
 
@@ -76,5 +76,14 @@ int handle_key_release(int key, t_vars *vars);
 int get_color(char *line);
 void init_move(t_vars *vars);
 void allocate_map(t_map *map_info, int width, int height);
+
+
+
+int     is_walkable(t_map *map, double x, double y);
+void    sky_and_floor(t_vars *vars);
+void    move_forward(t_vars *vars, double moveSpeed);
+void    move_backward(t_vars *vars, double moveSpeed);
+void    move_left(t_vars *vars, double moveSpeed);
+void    move_right(t_vars *vars, double moveSpeed);
 
 #endif
