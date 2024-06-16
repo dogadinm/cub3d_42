@@ -43,7 +43,7 @@ void starting_position(t_vars *vars)
 void creat_window(t_vars *vars)
 {
     vars->mlx = mlx_init();
-    vars->win = mlx_new_window(vars->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Raycasting");
+    vars->win = mlx_new_window(vars->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Cub3D");
     vars->img.img = mlx_new_image(vars->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
     vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bpp, &vars->img.line_length, &vars->img.endian);
 }
