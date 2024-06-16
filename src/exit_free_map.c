@@ -19,7 +19,6 @@ void free_map(t_map *map_info)
     free(map_info->east_texture);
 }
 
-
 void destroy_images(t_vars *vars)
 {
     int i;
@@ -28,19 +27,13 @@ void destroy_images(t_vars *vars)
     while (i < 4) 
     {
         if (vars->textures[i].img) 
-        {
             mlx_destroy_image(vars->mlx, vars->textures[i].img);
-        }
         i++;
     }
     if (vars->img.img) 
-    {
         mlx_destroy_image(vars->mlx, vars->img.img);
-    }
     if (vars->win) 
-    {
         mlx_destroy_window(vars->mlx, vars->win);
-    }
     if (vars->mlx) 
     {
         mlx_destroy_display(vars->mlx);
@@ -48,11 +41,18 @@ void destroy_images(t_vars *vars)
     }
 }
 
-
 int close_window(t_vars *vars)
 {
     free_map(&vars->map_info);
     destroy_images(vars);
     exit(0);
     return (0);
+}
+
+void error_exit(t_vars *vars, char *message)
+{
+    ft_printf("%s\n",message);
+    free_map(&vars->map_info);
+    destroy_images(vars);
+    exit(1);
 }

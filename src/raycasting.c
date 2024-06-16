@@ -16,7 +16,6 @@ void    sky_and_floor(t_vars *vars)
 
     floor = get_color(vars->map_info.floor_color);
     ceilling = get_color(vars->map_info.ceiling_color);
-
     if (ceilling == -1 || floor == -1)
         error_exit(vars, "Color");
     y = 0;
@@ -24,22 +23,15 @@ void    sky_and_floor(t_vars *vars)
     {
         x = 0;
         while (x < SCREEN_WIDTH)
-        {
-            my_mlx_pixel_put(&vars->img, x, y, ceilling);
-            x++;
-        }
+            my_mlx_pixel_put(&vars->img, x++, y, ceilling);
         y++;
     }
-    // Draw floor (lower half)
     y = SCREEN_HEIGHT / 2;
     while (y < SCREEN_HEIGHT)
     {
         x = 0;
         while (x < SCREEN_WIDTH)
-        {
-            my_mlx_pixel_put(&vars->img, x, y, floor);
-            x++;
-        }
+            my_mlx_pixel_put(&vars->img, x++, y, floor);
         y++;
     }
 }
@@ -71,10 +63,6 @@ void raycasting(t_vars *vars)
     unsigned int color;
     int d;
     t_img *texture;
-
-    
-
-
 
     x = 0;
     while (x < SCREEN_WIDTH)

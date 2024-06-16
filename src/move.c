@@ -3,11 +3,7 @@
 int handle_key_press(int key, t_vars *vars)
 {
     if (key == 65307) // Esc key
-    {
-        free_map(&vars->map_info);
-        destroy_images(vars);
-        exit(0);
-    }
+        close_window(vars);
     if (key == 119) // W key
         vars->move_forward = 1;
     if (key == 115) // S key

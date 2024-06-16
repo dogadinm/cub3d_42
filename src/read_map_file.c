@@ -1,25 +1,5 @@
 #include "cub3d.h"
 
-void determine_map_dimensions(int fd, int *width, int *height)
-{
-    char *line;
-    *width = 0;
-    *height = 0;
-
-    while ((line = get_next_line(fd)) != NULL)
-    {
-        if (line[0] == ' ' || (line[0] >= '0' && line[0] <= '1'))
-        {
-            (*height)++;
-            if (ft_strlen(line) > *width)
-            {
-                *width = ft_strlen(line);
-            }
-        }
-        free(line);
-    }
-}
-
 char *get_texture_info(char *line, char *info, t_vars *vars)
 {
     if (info != NULL) // if already exist

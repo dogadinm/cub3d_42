@@ -22,3 +22,24 @@ void allocate_map(t_map *map_info, int width, int height)
         i++;
     }
 }
+
+void determine_map_dimensions(int fd, int *width, int *height)
+{
+    char *line;
+    *width = 0;
+    *height = 0;
+
+    while ((line = get_next_line(fd)) != NULL)
+    {
+        if (line[0] == ' ' || (line[0] >= '0' && line[0] <= '1'))
+        {
+            (*height)++;
+            if (ft_strlen(line) > *width)
+            {
+                *width = ft_strlen(line);
+            }
+        }
+        free(line);
+    }
+}
+

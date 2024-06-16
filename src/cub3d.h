@@ -60,32 +60,33 @@ typedef struct  s_vars
     t_map   map_info;
 }               t_vars;
 
-
-void raycasting(t_vars *vars);
-void ft_load_texture(t_vars *vars);
+// Draw picture
 int game_loop(t_vars *vars);
-void read_map_file(char *filename, t_vars *vars);
-void check_elements(t_map *g);
-int get_color(char *line);
-void allocate_map(t_map *map_info, int width, int height);
-void free_map(t_map *map_info);
-void destroy_images(t_vars *vars);
-int close_window(t_vars *vars);
-int handle_key_press(int key, t_vars *vars);
-int handle_key_release(int key, t_vars *vars);
+void raycasting(t_vars *vars);
 
-void init_move(t_vars *vars);
-void allocate_map(t_map *map_info, int width, int height);
+// Read map file
+void    check_elements(t_map *g);
+void    read_map_file(char *filename, t_vars *vars);
+void    determine_map_dimensions(int fd, int *width, int *height);
+void    allocate_map(t_map *map_info, int width, int height);
+void    free_map(t_map *map_info);
 
-
-
-int     is_walkable(t_map *map, double x, double y);
+// Load picture
+int     get_color(char *line);
 void    sky_and_floor(t_vars *vars);
+void    ft_load_texture(t_vars *vars);
+
+// Move
+int     handle_key_press(int key, t_vars *vars);
+int     handle_key_release(int key, t_vars *vars);
+void    init_move(t_vars *vars);
 void    move_forward(t_vars *vars, double moveSpeed);
 void    move_backward(t_vars *vars, double moveSpeed);
 void    move_left(t_vars *vars, double moveSpeed);
 void    move_right(t_vars *vars, double moveSpeed);
 
-void error_exit(t_vars *vars, char *message);
+// Close
+int     close_window(t_vars *vars);
+void    error_exit(t_vars *vars, char *message);
 
 #endif
