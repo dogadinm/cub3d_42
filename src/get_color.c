@@ -13,34 +13,32 @@ int parse_int(char **line)
     return value;
 }
 
-int get_color(char *line)
+int get_color(char *line) 
 {
     int r;
-    int g;
     int b;
+    int g;
+    int color;
 
+    if (line == NULL)
+        return (-1);
     r = 0;
     g = 0;
     b = 0;
+    color = -1; // Initialize with error code
     r = parse_int(&line);
     if (*line != ',') 
-    {
-        ft_printf("Wrong color\n");
-        exit(1);
-    }
+        return color;
     line++;  // Skip comma
     g = parse_int(&line);
     if (*line != ',') 
-    {
-        ft_printf("Wrong color\n");
-        exit(1);
-    } 
+        return color;
     line++;  
     b = parse_int(&line);
     if (*line != '\0' && *line != '\n')
-    {
-        ft_printf("Wrong color\n");
-        exit(1);
-    }
-    return (r << 16 | g << 8 | b);
+        return color;
+    if (r > 255 || r < 0 || g > 255 || g < 0 || b > 255 || b < 0)
+        return color;
+    color = (r << 16 | g << 8 | b);
+    return color;
 }

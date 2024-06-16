@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-char	*ft_strtrim(char const *s1, char const *set)
+char	*ft_strtrim(char *s1, char const *set)
 {
 	size_t	i;
 	size_t	len_s1;
@@ -31,6 +31,7 @@ char	*ft_strtrim(char const *s1, char const *set)
 		if (str)
 			ft_strlcpy(str, &s1[i], len_s1 - i + 1);
 	}
+	free(s1);
 	return (str);
 }
 /*

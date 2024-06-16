@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     t_vars vars;
 
     check_arg(argc, argv);
-    read_map_file(argv[1], &vars.map_info);
+    read_map_file(argv[1], &vars);
     check_elements(&vars.map_info);
     creat_window(&vars);
     ft_load_texture(&vars);

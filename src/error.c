@@ -1,11 +1,9 @@
 #include "cub3d.h"
 
-
-
-// int error(t_vars *vars)
-// {
-//     free_map(&vars->map_info);
-//     destroy_images(vars);
-//     exit(1);
-//     return (0);
-// }
+void error_exit(t_vars *vars, char *message)
+{
+    ft_printf("%s\n",message);
+    free_map(&vars->map_info);
+    destroy_images(vars);
+    exit(1);
+}

@@ -11,6 +11,8 @@ void free_map(t_map *map_info)
         i++;
     }
     free(map_info->map);
+    free(map_info->ceiling_color);
+    free(map_info->floor_color);
     free(map_info->north_texture);
     free(map_info->south_texture);
     free(map_info->west_texture);

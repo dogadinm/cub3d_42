@@ -29,8 +29,8 @@ typedef struct  s_map
     char *south_texture;
     char *west_texture;
     char *east_texture;
-    int floor_color;
-    int ceiling_color;
+    char *floor_color;
+    char *ceiling_color;
     int **map;
     int map_width;
     int map_height;
@@ -64,7 +64,7 @@ typedef struct  s_vars
 void raycasting(t_vars *vars);
 void ft_load_texture(t_vars *vars);
 int game_loop(t_vars *vars);
-void read_map_file(char *filename, t_map *map_info);
+void read_map_file(char *filename, t_vars *vars);
 void check_elements(t_map *g);
 int get_color(char *line);
 void allocate_map(t_map *map_info, int width, int height);
@@ -73,7 +73,7 @@ void destroy_images(t_vars *vars);
 int close_window(t_vars *vars);
 int handle_key_press(int key, t_vars *vars);
 int handle_key_release(int key, t_vars *vars);
-int get_color(char *line);
+
 void init_move(t_vars *vars);
 void allocate_map(t_map *map_info, int width, int height);
 
@@ -85,5 +85,7 @@ void    move_forward(t_vars *vars, double moveSpeed);
 void    move_backward(t_vars *vars, double moveSpeed);
 void    move_left(t_vars *vars, double moveSpeed);
 void    move_right(t_vars *vars, double moveSpeed);
+
+void error_exit(t_vars *vars, char *message);
 
 #endif

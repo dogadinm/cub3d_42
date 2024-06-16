@@ -16,7 +16,7 @@ void check_walls(t_map *g, int i, int j)
         if (g->map[j - 1][i] == -1 || g->map[j + 1][i] == -1 ||
             g->map[j][i - 1] == -1 || g->map[j][i + 1] == -1) 
         {
-            ft_printf("Map is not closed at (%d, %d)\n", j, i);
+            ft_printf("Map is wrong");
             free_map(g);
             exit(1);
         }

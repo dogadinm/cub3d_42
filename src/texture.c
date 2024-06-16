@@ -15,12 +15,11 @@ void init_textures(t_vars *vars)
 
 void load_texture(t_vars *vars, t_img *texture, char *path)
 {
+    if (path == NULL) 
+        error_exit(vars, "Failed to load texture");
     texture->img = mlx_xpm_file_to_image(vars->mlx, path, &texture->width, &texture->height);
     if (!texture->img) 
-    {
-        ft_printf("Failed to load texture: %s\n", path);
-        close_window(vars);
-    }
+        error_exit(vars, "Failed to load texture");
     texture->addr = mlx_get_data_addr(texture->img, &texture->bpp, &texture->line_length, &texture->endian);
 }
 
