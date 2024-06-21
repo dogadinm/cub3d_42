@@ -67,8 +67,8 @@ void raycasting(t_vars *vars);
 // Read map file
 void    check_elements(t_map *g);
 void    read_map_file(char *filename, t_vars *vars);
-void    determine_map_dimensions(int fd, int *width, int *height);
-void    allocate_map(t_map *map_info, int width, int height);
+void    determine_map_dimensions(int fd, t_vars *vars);
+void    allocate_map(t_map *map_info);
 void    free_map(t_map *map_info);
 
 // Load picture

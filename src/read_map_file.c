@@ -33,7 +33,7 @@ void read_map_metadata(char *line, t_map *map_info, t_vars *vars)
 void parse_map_line(char *line, t_map *map_info, int map_row)
 {
     int i = 0;
-    while (i < (int)ft_strlen(line) && line[i] != '\n')
+    while (i < ft_strlen(line) && line[i] != '\n')
     {
         if (line[i] == 'N' || line[i] == 'S' || line[i] == 'E' || line[i] == 'W')
         {
@@ -69,20 +69,23 @@ void read_map_data(int fd, t_map *map_info, t_vars *vars)
     }
 }
 
-void read_map_file(char *filename, t_vars *vars)
+void init_map_info(t_vars *vars)
 {
-    int fd1;
-    int fd2;
-    int map_width;
-    int map_height;
-    
     vars->map_info.map = NULL;
     vars->map_info.north_texture = NULL;
     vars->map_info.south_texture = NULL;
     vars->map_info.west_texture = NULL;
     vars->map_info.east_texture = NULL;
     vars->map_info.ceiling_color = NULL;
-    vars->map_info.floor_color = NULL;
+    vars->map_info.floor_color = NULL;    
+}
+
+void read_map_file(char *filename, t_vars *vars)
+{
+    int fd1;
+    int fd2;
+    
+    init_map_info(vars);
     fd1 = open(filename, O_RDONLY);
     if (fd1 == -1)
     {
@@ -96,8 +99,8 @@ void read_map_file(char *filename, t_vars *vars)
         write(2,"Error opening map file\n",23);
         exit(1);
     }
-    determine_map_dimensions(fd1, &map_width, &map_height);
-    allocate_map(&vars->map_info, map_width, map_height);
+    determine_map_dimensions(fd1, vars);
+    allocate_map(&vars->map_info);
     read_map_data(fd2, &vars->map_info, vars);
     close(fd1);
     close(fd2);

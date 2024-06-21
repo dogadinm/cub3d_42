@@ -1,20 +1,17 @@
 #include "cub3d.h"
 
-void allocate_map(t_map *map_info, int width, int height)
+void allocate_map(t_map *map_info)
 {
     int i; 
     int j;
 
-    map_info->map_width = width;
-    map_info->map_height = height;
-    map_info->map = malloc(height * sizeof(int *));
-    
+    map_info->map = malloc(map_info->map_height * sizeof(int *));
     i = 0;
-    while (i < height) 
+    while (i < map_info->map_height) 
     {
-        map_info->map[i] = malloc(width * sizeof(int));
+        map_info->map[i] = malloc(map_info->map_width * sizeof(int));
         j = 0;
-        while (j < width) 
+        while (j < map_info->map_width) 
         {
             map_info->map[i][j] = -1; // Initialize with -1 (undefined)
             j++;
@@ -23,20 +20,20 @@ void allocate_map(t_map *map_info, int width, int height)
     }
 }
 
-void determine_map_dimensions(int fd, int *width, int *height)
+void determine_map_dimensions(int fd, t_vars *vars)
 {
     char *line;
-    *width = 0;
-    *height = 0;
+    vars->map_info.map_height = 0;
+    vars->map_info.map_width = 0;
 
     while ((line = get_next_line(fd)) != NULL)
     {
         if (line[0] == ' ' || (line[0] >= '0' && line[0] <= '1'))
         {
-            (*height)++;
-            if (ft_strlen(line) > *width)
+            (vars->map_info.map_height)++;
+            if (ft_strlen(line) > vars->map_info.map_width)
             {
-                *width = ft_strlen(line);
+                vars->map_info.map_width = ft_strlen(line);
             }
         }
         free(line);

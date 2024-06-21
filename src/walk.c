@@ -19,8 +19,11 @@ int is_walkable(t_map *map, double x, double y)
 
 void move_forward(t_vars *vars, double moveSpeed)
 {
-    double newPosX = vars->posX + vars->dirX * moveSpeed;
-    double newPosY = vars->posY + vars->dirY * moveSpeed;
+    double newPosX;
+    double newPosY;
+
+    newPosX = vars->posX + vars->dirX * moveSpeed;
+    newPosY = vars->posY + vars->dirY * moveSpeed;
     if (is_walkable(&vars->map_info, newPosX, vars->posY))
         vars->posX = newPosX;
     if (is_walkable(&vars->map_info, vars->posX, newPosY))
@@ -29,8 +32,11 @@ void move_forward(t_vars *vars, double moveSpeed)
 
 void move_backward(t_vars *vars, double moveSpeed)
 {
-    double newPosX = vars->posX - vars->dirX * moveSpeed;
-    double newPosY = vars->posY - vars->dirY * moveSpeed;
+    double newPosX;
+    double newPosY;
+
+    newPosX = vars->posX - vars->dirX * moveSpeed;
+    newPosY = vars->posY - vars->dirY * moveSpeed;
     if (is_walkable(&vars->map_info, newPosX, vars->posY))
         vars->posX = newPosX;
     if (is_walkable(&vars->map_info, vars->posX, newPosY))
@@ -39,8 +45,11 @@ void move_backward(t_vars *vars, double moveSpeed)
 
 void move_left(t_vars *vars, double moveSpeed)
 {
-    double newPosX = vars->posX - vars->planeX * moveSpeed;
-    double newPosY = vars->posY - vars->planeY * moveSpeed;
+    double newPosX;
+    double newPosY;
+
+    newPosX = vars->posX - vars->planeX * moveSpeed;
+    newPosY = vars->posY - vars->planeY * moveSpeed;
     if (is_walkable(&vars->map_info, newPosX, vars->posY))
         vars->posX = newPosX;
     if (is_walkable(&vars->map_info, vars->posX, newPosY))
@@ -49,8 +58,11 @@ void move_left(t_vars *vars, double moveSpeed)
 
 void move_right(t_vars *vars, double moveSpeed)
 {
-    double newPosX = vars->posX + vars->planeX * moveSpeed;
-    double newPosY = vars->posY + vars->planeY * moveSpeed;
+    double newPosX;
+    double newPosY;
+
+    newPosX = vars->posX + vars->planeX * moveSpeed;
+    newPosY = vars->posY + vars->planeY * moveSpeed;
     if (is_walkable(&vars->map_info, newPosX, vars->posY))
         vars->posX = newPosX;
     if (is_walkable(&vars->map_info, vars->posX, newPosY))

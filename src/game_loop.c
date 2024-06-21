@@ -3,20 +3,26 @@
 // Move camera
 void turn_left(t_vars *vars, double cameraSpeed)
 {
-    double oldDirX = vars->dirX;
+    double oldDirX;
+    double oldPlaneX;
+
+    oldDirX = vars->dirX;
     vars->dirX = vars->dirX * cos(cameraSpeed) - vars->dirY * sin(cameraSpeed);
     vars->dirY = oldDirX * sin(cameraSpeed) + vars->dirY * cos(cameraSpeed);
-    double oldPlaneX = vars->planeX;
+    oldPlaneX = vars->planeX;
     vars->planeX = vars->planeX * cos(cameraSpeed) - vars->planeY * sin(cameraSpeed);
     vars->planeY = oldPlaneX * sin(cameraSpeed) + vars->planeY * cos(cameraSpeed);
 }
 
 void turn_right(t_vars *vars, double cameraSpeed)
 {
-    double oldDirX = vars->dirX;
+    double oldDirX;
+    double oldPlaneX;
+
+    oldDirX = vars->dirX;
     vars->dirX = vars->dirX * cos(-cameraSpeed) - vars->dirY * sin(-cameraSpeed);
     vars->dirY = oldDirX * sin(-cameraSpeed) + vars->dirY * cos(-cameraSpeed);
-    double oldPlaneX = vars->planeX;
+    oldPlaneX = vars->planeX;
     vars->planeX = vars->planeX * cos(-cameraSpeed) - vars->planeY * sin(-cameraSpeed);
     vars->planeY = oldPlaneX * sin(-cameraSpeed) + vars->planeY * cos(-cameraSpeed);
 }
