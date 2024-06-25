@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mdogadin <mdogadin@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/25 11:50:44 by mdogadin          #+#    #+#             */
+/*   Updated: 2024/06/25 12:13:40 by mdogadin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
 void	check_arg(int argc, char **argv)
@@ -14,55 +26,65 @@ void	check_arg(int argc, char **argv)
 	}
 }
 
-void starting_position(t_vars *vars)
+void	init_vars(t_vars *vars)
 {
-    vars->posX = vars->map_info.player_start_x + 0.5; // Start in the center of the tile
-    vars->posY = vars->map_info.player_start_y + 0.5; // Start in the center of the tile
-    if (vars->map_info.player_start_dir == 'N') 
-    {
-        vars->dirX = -1; vars->dirY = 0;
-        vars->planeX = 0; vars->planeY = 0.66;
-    } 
-    else if (vars->map_info.player_start_dir == 'S') 
-    {
-        vars->dirX = 1; vars->dirY = 0;
-        vars->planeX = 0; vars->planeY = -0.66;
-    } 
-    else if (vars->map_info.player_start_dir == 'E') 
-    {
-        vars->dirX = 0; vars->dirY = 1;
-        vars->planeX = 0.66; vars->planeY = 0;
-    } 
-    else if (vars->map_info.player_start_dir == 'W') 
-    {
-        vars->dirX = 0; vars->dirY = -1;
-        vars->planeX = -0.66; vars->planeY = 0;
-    }
+	vars->dirx = 0;
+	vars->diry = 0;
+	vars->planex = 0;
+	vars->planey = 0;
 }
 
-void creat_window(t_vars *vars)
+void	starting_position(t_vars *vars)
 {
-    vars->mlx = mlx_init();
-    vars->win = mlx_new_window(vars->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Cub3D");
-    vars->img.img = mlx_new_image(vars->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
-    vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bpp, &vars->img.line_length, &vars->img.endian);
+	vars->posx = vars->map_info.player_start_x + 0.5;
+	vars->posy = vars->map_info.player_start_y + 0.5;
+	init_vars(vars);
+	if (vars->map_info.player_start_dir == 'N')
+	{
+		vars->dirx = -1;
+		vars->planey = 0.66;
+	}
+	else if (vars->map_info.player_start_dir == 'S')
+	{
+		vars->dirx = 1;
+		vars->planey = -0.66;
+	}
+	else if (vars->map_info.player_start_dir == 'E')
+	{
+		vars->dirx = 0;
+		vars->planex = 0.66;
+	}
+	else if (vars->map_info.player_start_dir == 'W')
+	{
+		vars->diry = -1;
+		vars->planex = -0.66;
+	}
 }
 
-int main(int argc, char **argv)
+void	creat_window(t_vars *vars)
 {
-    t_vars vars;
+	vars->mlx = mlx_init();
+	vars->win = mlx_new_window(vars->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Cub3D");
+	vars->img.img = mlx_new_image(vars->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
+	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bpp,
+			&vars->img.line_length, &vars->img.endian);
+}
 
-    check_arg(argc, argv);
-    read_map_file(argv[1], &vars);
-    check_elements(&vars.map_info);
-    creat_window(&vars);
-    ft_load_texture(&vars);
-    starting_position(&vars);
-    init_move(&vars);
-    mlx_hook(vars.win, 2, 1L<<0, handle_key_press, &vars);
-    mlx_hook(vars.win, 3, 1L<<1, handle_key_release, &vars);
-    mlx_hook(vars.win, 17, 0L, close_window, &vars); 
-    mlx_loop_hook(vars.mlx, game_loop, &vars);
-    mlx_loop(vars.mlx);
-    return (0);
+int	main(int argc, char **argv)
+{
+	t_vars	vars;
+
+	check_arg(argc, argv);
+	read_map_file(argv[1], &vars);
+	check_elements(&vars.map_info);
+	creat_window(&vars);
+	ft_load_texture(&vars);
+	starting_position(&vars);
+	init_move(&vars);
+	mlx_hook(vars.win, 2, 1L << 0, handle_key_press, &vars);
+	mlx_hook(vars.win, 3, 1L << 1, handle_key_release, &vars);
+	mlx_hook(vars.win, 17, 0L, close_window, &vars);
+	mlx_loop_hook(vars.mlx, game_loop, &vars);
+	mlx_loop(vars.mlx);
+	return (0);
 }
