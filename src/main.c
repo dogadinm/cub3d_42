@@ -51,7 +51,7 @@ void	starting_position(t_vars *vars)
 	}
 	else if (vars->map_info.player_start_dir == 'E')
 	{
-		vars->dirx = 0;
+		vars->diry = 1;
 		vars->planex = 0.66;
 	}
 	else if (vars->map_info.player_start_dir == 'W')

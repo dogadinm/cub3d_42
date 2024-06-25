@@ -29,7 +29,7 @@ void	sky_and_floor(t_vars *vars)
 	floor = get_color(vars->map_info.floor_color);
 	ceilling = get_color(vars->map_info.ceiling_color);
 	if (ceilling == -1 || floor == -1)
-		error_exit(vars, "Color");
+		error_exit(vars, "Wrong color");
 	y = 0;
 	while (y < SCREEN_HEIGHT / 2)
 	{

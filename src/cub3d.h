@@ -6,7 +6,7 @@
 /*   By: mdogadin <mdogadin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 10:39:12 by tchvatal          #+#    #+#             */
-/*   Updated: 2024/06/25 11:47:11 by mdogadin         ###   ########.fr       */
+/*   Updated: 2024/06/25 13:40:32 by mdogadin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct s_map
 	int		player_start_x;
 	int		player_start_y;
 	char	player_start_dir;
+	int		players;
 }				t_map;
 
 typedef struct s_vars

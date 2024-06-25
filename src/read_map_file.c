@@ -6,7 +6,7 @@
 /*   By: mdogadin <mdogadin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 11:30:03 by mdogadin          #+#    #+#             */
-/*   Updated: 2024/06/25 12:16:54 by mdogadin         ###   ########.fr       */
+/*   Updated: 2024/06/25 13:42:19 by mdogadin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ void	parse_map_line(char *line, t_map *map_info, int map_row)
 			map_info->player_start_y = i;
 			map_info->player_start_dir = line[i];
 			map_info->map[map_row][i] = 0;
+			map_info->players++;
 		}
 		else if (line[i] == '1')
 			map_info->map[map_row][i] = 1;
@@ -99,6 +100,7 @@ void	read_map_file(char *filename, t_vars *vars)
 	int	fd2;
 
 	init_map_info(vars);
+	vars->map_info.players = 0;
 	fd1 = open(filename, O_RDONLY);
 	if (fd1 == -1)
 	{
